@@ -1,7 +1,7 @@
 ---
-name: "[FEAT] 새로운 기능 제안"
-about: 새로운 기능 구현
-title: ''
+name: Feature Request
+about: 새로운 기능을 제안할 때 사용하세요
+title: "[FEAT]"
 labels: feature
 assignees: ''
 
