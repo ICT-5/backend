@@ -4,12 +4,12 @@ spring:
       client:
         registration:
           kakao:
-            client-id: b78cf3dc0ad2f8198ab5b31c9684be9f # REST API key
-            client-secret: "" # Admin key
+            client-id: b78cf3dc0ad2f8198ab5b31c9684be9f   # REST API Key
+            client-authentication-method: POST
             authorization-grant-type: authorization_code
             redirect-uri: http://localhost:8080/login/oauth2/code/kakao
-            client-authentication-method: client_secret_post
-            scope: profile_nickname
+            scope:
+              - profile_nickname
         provider:
           kakao:
             authorization-uri: https://kauth.kakao.com/oauth/authorize
