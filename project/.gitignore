@@ -1,0 +1,24 @@
+### Gradle ###
+.gradle/
+build/
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+### Logs ###
+*.log
+
+### OS Files ###
+.DS_Store
+
+### Spring Boot ###
+/target/
+/bin/
+/out/
+
+### Others ###
+!gradle/wrapper/gradle-wrapper.jar
