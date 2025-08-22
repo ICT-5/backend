@@ -1,0 +1,11 @@
+
+# IDE & build
+.idea/
+.gradle/
+**/build/
+
+
+# IDE & build
+.idea/
+.gradle/
+**/build/
