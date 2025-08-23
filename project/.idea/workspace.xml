@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b4f8d083-2377-4d32-afc5-43af49cb9e50" name="변경" comment="">
+      <change afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../build.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gradlew" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../gradlew.bat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../settings.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/Oauth2PracticeApplication.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/ServerInitializer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/controller/AccessController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/global/GlobalExceptionHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/httpinterface/config/HttpInterfaceConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/httpinterface/config/HttpInterfaceFactory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/httpinterface/config/HttpInterfaceFactoryImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/httpinterface/controller/AuthController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/httpinterface/provider/RestOAuth2Strategy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/httpinterface/provider/kakao/KakaoApiClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/httpinterface/provider/kakao/KakaoAuthProperties.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/httpinterface/provider/kakao/KakaoRestOAuth2Strategy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/httpinterface/provider/kakao/KakaoToken.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/httpinterface/provider/kakao/KakaoUserInfo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/httpinterface/service/OAuth2RestService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/httpinterface/service/OAuth2RestStrategyComposite.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/httpinterface/service/OAuth2UserInfo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/model/User/OauthType.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/model/User/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/oauth2client/config/SecurityConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/oauth2client/service/CustomAuthExceptionHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/oauth2client/service/CustomOAuth2SuccessHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/oauth2client/service/CustomOAuth2UserService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/oauth2client/service/OAuth2StrategyComposite.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/oauth2client/service/OAuth2UserInfo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/oauth2client/service/strategy/GithubOAuth2Strategy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/oauth2client/service/strategy/KakaoOAuth2Strategy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/oauth2client/service/strategy/OAuth2Strategy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/java/org/san/oauth2practice/repository/InMemoryUserRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/main/resources/application.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/test/java/org/san/oauth2practice/Oauth2PracticeApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="project" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.project 빌드.executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "Spring Boot.ProjectApplication.executor": "Run",
+    "node.js.selected.package.tslint": "(autodetect)"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="ProjectApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="project.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="ict.project.ProjectApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="TaskManager">
+    <servers />
+  </component>
+</project>
