@@ -1,4 +1,4 @@
-package ict.project.resume.entity;
+package ict.project.user;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,27 +30,24 @@ public class UserEntity {
 
     @Column(length = 255)
     private String username;
+    private String password;
 
     @Column(length = 255)
     private String provider;
-
     @Column(length = 255)
     private String providerId;
 
     // String → DATETIME 매핑
     private LocalDateTime createDate;
 
+    @Lob
+    private String techStack; //기술스택
+    @Lob
+    private String jobCareer; //경력
+    @Lob
+    private String educationCareer; //학력
     @Column(length = 255)
-    private String job_title;
-
-    @Lob
-    private String education_career;
-
-    @Lob
-    private String tech_stack;
-
-    // 컬럼명이 'Field' 이므로 명시적 매핑
-    @Column(name = "Field", length = 255)
-    private String fieldName;
+    private String jobCategory;  //희망 직군
+    private String jobRole;      //희망 직무
 }
 
