@@ -3,9 +3,15 @@
 .idea/
 .gradle/
 **/build/
+application.properties
 
 
-# IDE & build
+# IntelliJ IDEA
+out/
+*.iml
 .idea/
-.gradle/
-**/build/
+
+# 기타
+*.class
+*.log
+*.bin
