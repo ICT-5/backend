@@ -1,4 +1,4 @@
-package ict.project.resume.dto;
+package ict.project.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
