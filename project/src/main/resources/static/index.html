@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ICT 채용 시뮬레이터 - 통합 업로드 데모</title>
+  <style>
+    :root{--bg:#0f172a;--card:#111827;--ink:#e5e7eb;--muted:#9ca3af;--accent:#38bdf8;--danger:#f87171}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",sans-serif}
+    header{padding:24px 16px;border-bottom:1px solid #1f2937;background:#0b1220;position:sticky;top:0}
+    header h1{margin:0;font-size:18px} header small{color:var(--muted)}
+    main{max-width:980px;margin:24px auto;padding:0 16px;display:grid;gap:16px}
+    .card{background:var(--card);border:1px solid #1f2937;border-radius:14px;padding:16px}
+    .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    label{font-weight:600}
+    input[type="text"],input[type="number"],input[type="url"],input[type="file"],textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #1f2937;background:#0b1220;color:var(--ink)}
+    textarea{min-height:120px}
+    .btn{appearance:none;border:1px solid #1f2937;background:#0c4a6e;color:#e6f6ff;padding:10px 14px;border-radius:10px;cursor:pointer}
+    .btn:hover{background:#075985}
+    .btn.secondary{background:#1f2937}
+    .btn.danger{background:#7f1d1d}
+    .hint{color:var(--muted);font-size:12px}
+    pre{background:#0b1220;border:1px solid #1f2937;border-radius:10px;padding:12px;overflow:auto}
+    .grid{display:grid;gap:12px}
+    .cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    @media (max-width:800px){.cols-2{grid-template-columns:1fr}}
+    .badge{display:inline-block;padding:2px 8px;border-radius:999px;background:#1f2937;color:#cbd5e1;font-size:12px}
+  </style>
+</head>
+<body>
+<header>
+  <h1>ICT 채용 면접 시뮬레이터 · <small class="badge">통합 업로드 데모</small></h1>
+  <small>백엔드 API와 통신하는 간단 테스트 페이지입니다.</small>
+</header>
+
+<main>
+  <!-- 공통 설정 -->
+  <section class="card grid">
+    <div class="row">
+      <div style="flex:1 1 180px">
+        <label for="userId">유저 ID</label>
+        <input id="userId" type="number" value="1" />
+        <div class="hint">DB의 <code>User.id</code></div>
+      </div>
+      <div style="flex:2 1 280px">
+        <label for="baseUrl">API 베이스 URL</label>
+        <input id="baseUrl" type="url" placeholder="예: http://localhost:8080" />
+        <div class="hint">비워두면 동일 오리진 사용</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1) 통합 업로드: 자소서 + 채용공고 -->
+  <section class="card grid">
+    <h3>① 자소서 업로드 + 채용공고 크롤링 (통합)</h3>
+    <div class="row" style="width:100%">
+      <div style="flex:1 1 260px">
+        <label for="resumeFile">자소서 파일</label>
+        <input id="resumeFile" type="file" />
+      </div>
+      <div style="flex:2 1 320px">
+        <label for="jobUrl">채용공고 URL</label>
+        <input id="jobUrl" type="url" placeholder="https://example.com/job/123" />
+      </div>
+      <div>
+        <button class="btn" id="btnUnified">통합 업로드 실행</button>
+      </div>
+    </div>
+    <div class="hint">
+      엔드포인트: <code>POST /api/resume/upload</code> (multipart/form-data)<br/>
+      필드: <code>userId</code> (query), <code>resumeFile</code> (file), <code>jobUrl</code> (text)
+    </div>
+    <pre id="outUnified">결과가 여기 표시됩니다…</pre>
+  </section>
+
+  <!-- 2) 분석 -->
+  <section class="card grid cols-2">
+    <div>
+      <h3>② 분석 실행</h3>
+      <div class="row">
+        <button class="btn" id="btnAnalyze">분석 시작</button>
+      </div>
+      <div class="hint">엔드포인트: <code>POST /api/analysis/v2/feedback</code> (JSON: { userId })</div>
+    </div>
+    <div>
+      <label>LLM 결과</label>
+      <pre id="outAnalyze">결과가 여기 표시됩니다…</pre>
+    </div>
+    <div style="grid-column:1/-1">
+      <label>최종 프롬프트 (RAG)</label>
+      <pre id="outPrompt">프롬프트가 여기 표시됩니다…</pre>
+    </div>
+  </section>
+</main>
+
+<script>
+  const $ = (sel) => document.querySelector(sel);
+  const getBase = () => ($("#baseUrl").value || "").replace(/\/$/, "");
+  const getUserId = () => parseInt($("#userId").value || "0", 10);
+
+  function show(el, data){
+    try{ el.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2); }
+    catch{ el.textContent = String(data); }
+  }
+
+  // 1) 통합 업로드
+  $("#btnUnified").addEventListener("click", async () => {
+    const userId = getUserId();
+    const file = $("#resumeFile").files[0];
+    const jobUrl = $("#jobUrl").value.trim();
+
+    if(!userId) return alert("유저 ID를 입력하세요");
+    if(!file) return alert("자소서 파일을 선택하세요");
+    if(!jobUrl) return alert("채용공고 URL을 입력하세요");
+
+    const fd = new FormData();
+    fd.append("resumeFile", file);
+    fd.append("jobUrl", jobUrl);
+
+    const url = `${getBase()}/api/resume/upload?userId=${encodeURIComponent(userId)}`;
+    try{
+      const res = await fetch(url, { method: 'POST', body: fd });
+      const txt = await res.text();
+      let data; try{ data = JSON.parse(txt) } catch{ data = txt }
+      show($("#outUnified"), data);
+    }catch(e){ show($("#outUnified"), String(e)); }
+  });
+
+  // 2) 분석 실행 (V2)
+  $("#btnAnalyze").addEventListener("click", async () => {
+    const userId = getUserId();
+    if(!userId) return alert("유저 ID를 입력하세요");
+
+    const url = `${getBase()}/api/analysis/v2/feedback`;
+    try{
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId })
+      });
+      const txt = await res.text();
+      let data; try{ data = JSON.parse(txt) } catch{ data = txt }
+
+      if(data && typeof data === 'object'){
+        show($("#outAnalyze"), data.result ?? data);
+        show($("#outPrompt"), data.prompt ?? "(프롬프트 미포함 응답)");
+      } else {
+        show($("#outAnalyze"), data);
+      }
+    }catch(e){ show($("#outAnalyze"), String(e)); }
+  });
+</script>
+</body>
+</html>
