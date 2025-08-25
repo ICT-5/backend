@@ -40,6 +40,29 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+//////////////승연추가
+	implementation ("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.apache.poi:poi-ooxml:5.2.5")
+	// ✅ Bean Validation 추가 (jakarta.validation.* 사용 가능)
+	implementation("org.springframework.boot:spring-boot-starter-validation")
+	implementation("org.jsoup:jsoup:1.17.2")
+	// HTML 본문 추출
+	implementation("org.jsoup:jsoup:1.17.2")
+
+	// 문서 텍스트 추출 (PDF/Doc/Docx 등)
+	implementation("org.apache.tika:tika-core:2.9.2")
+	implementation("org.apache.tika:tika-parsers-standard-package:2.9.2")
+
+	// OpenAI REST
+	implementation ("com.squareup.okhttp3:okhttp:4.12.0")
+	implementation ("com.fasterxml.jackson.core:jackson-databind:2.17.1")
+
+	// 텍스트 유틸 (문장/청크 나누기 등에 사용하면 편함)
+	implementation("org.apache.commons:commons-text:1.11.0")
+
+	implementation("org.apache.pdfbox:pdfbox:2.0.31")
+	implementation("org.apache.pdfbox:fontbox:2.0.31")
 }
 
 dependencyManagement {

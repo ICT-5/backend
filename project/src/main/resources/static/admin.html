@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>RAG 관리자 페이지</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 24px; }
+    h1 { margin-bottom: 8px; }
+    section { border: 1px solid #ddd; border-radius: 10px; padding: 16px; margin: 14px 0; }
+    button { cursor: pointer; padding: 8px 12px; border-radius: 8px; border: 1px solid #ccc; background: #fafafa; }
+    button:hover { background: #f0f0f0; }
+    .row { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+    pre { background: #0f172a; color: #e5e7eb; padding: 12px; border-radius: 8px; overflow: auto; }
+    small { color: #666; }
+  </style>
+</head>
+<body>
+<h1>RAG 관리자 페이지</h1>
+<small>※ application.properties의 <b>app.rag.admin-user-id</b> 값으로 전역 코퍼스가 저장됩니다.</small>
+
+<!-- 1) 전역 프롬프트 보장 -->
+<section>
+  <h2>1) 전역 프롬프트 보장 (resume_feedback)</h2>
+  <div class="row">
+    <button id="btnEnsurePrompt" type="button">프롬프트 생성/보장</button>
+  </div>
+  <pre id="ensureResult"></pre>
+</section>
+
+<!-- 2) 전역 코퍼스 업로드 -->
+<section>
+  <h2>2) 전역 코퍼스 업로드</h2>
+  <form id="uploadForm">
+    <div class="row">
+      <input type="file" id="fileInput" name="file" />
+      <button type="submit">업로드</button>
+    </div>
+  </form>
+  <pre id="uploadResult"></pre>
+</section>
+
+<!-- 3) 전역 코퍼스 조회/삭제 -->
+<section>
+  <h2>3) 전역 코퍼스 관리</h2>
+  <div class="row">
+    <button id="btnList">코퍼스 목록 조회</button>
+    <button id="btnDeleteAll" style="border-color:#e11d48;color:#e11d48;">코퍼스 전체 삭제</button>
+  </div>
+  <pre id="listResult"></pre>
+</section>
+
+<script>
+  // 1) 프롬프트 보장
+  document.getElementById("btnEnsurePrompt").addEventListener("click", async () => {
+    try {
+      const res = await fetch("/rag/admin/prompt/ensure", { method: "POST" });
+      const text = await res.text();
+      document.getElementById("ensureResult").textContent = `status=${res.status}\n` + text;
+    } catch (err) {
+      document.getElementById("ensureResult").textContent = "에러: " + err;
+    }
+  });
+
+  // 2) 코퍼스 업로드
+  document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const file = document.getElementById("fileInput").files[0];
+    if (!file) {
+      document.getElementById("uploadResult").textContent = "파일을 선택하세요.";
+      return;
+    }
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("/rag/admin/corpus/upload", { method: "POST", body: formData });
+      const text = await res.text();
+      document.getElementById("uploadResult").textContent = `status=${res.status}\n` + text;
+    } catch (err) {
+      document.getElementById("uploadResult").textContent = "에러: " + err;
+    }
+  });
+
+  // 3-1) 코퍼스 목록 조회
+  document.getElementById("btnList").addEventListener("click", async () => {
+    try {
+      const res = await fetch("/rag/admin/corpus/chunks");
+      const text = await res.text(); // 백엔드가 단순 텍스트/JSON을 반환할 수 있으니 text로 받음
+      let pretty = text;
+      try { pretty = JSON.stringify(JSON.parse(text), null, 2); } catch (_) {}
+      document.getElementById("listResult").textContent = `status=${res.status}\n` + pretty;
+    } catch (err) {
+      document.getElementById("listResult").textContent = "에러: " + err;
+    }
+  });
+
+  // 3-2) 코퍼스 전체 삭제
+  document.getElementById("btnDeleteAll").addEventListener("click", async () => {
+    if (!confirm("전역 코퍼스(RAG 청크)를 모두 삭제할까요?")) return;
+    try {
+      const res = await fetch("/rag/admin/corpus/chunks", { method: "DELETE" });
+      const text = await res.text();
+      document.getElementById("listResult").textContent = `status=${res.status}\n` + text;
+    } catch (err) {
+      document.getElementById("listResult").textContent = "에러: " + err;
+    }
+  });
+</script>
+</body>
+</html>
