@@ -1,9 +1,9 @@
 package ict.project.resume.service;
 
 import ict.project.resume.entity.ResumeEntity;
-import ict.project.resume.entity.UserEntity;
+import ict.project.user.UserEntity;
 import ict.project.resume.repository.ResumeRepository;
-import ict.project.resume.repository.UserRepository;
+import ict.project.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;

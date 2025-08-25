@@ -1,7 +1,7 @@
 package ict.project.resume.repository;
 
 import ict.project.resume.entity.ResumeEntity;
-import ict.project.resume.entity.UserEntity;
+import ict.project.user.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
