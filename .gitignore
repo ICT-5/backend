@@ -19,8 +19,8 @@ out/
 # IDE & build
 .idea/
 .vscode/
-.gradle/
 **/build/
+build/
 out/
 *.iml
 
