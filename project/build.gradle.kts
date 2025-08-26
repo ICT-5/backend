@@ -33,7 +33,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.ai:spring-ai-pdf-document-reader")
 	implementation("org.springframework.ai:spring-ai-starter-model-openai")
-	//implementation("org.springframework.session:spring-session-jdbc")
+	implementation("org.springframework.session:spring-session-jdbc")
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("com.mysql:mysql-connector-j")
 	annotationProcessor("org.projectlombok:lombok")
@@ -63,12 +63,11 @@ dependencies {
 
 	implementation("org.apache.pdfbox:pdfbox:2.0.31")
 	implementation("org.apache.pdfbox:fontbox:2.0.31")
+	implementation("com.fasterxml.jackson.core:jackson-databind:2.17.1")
+	implementation("org.springframework.boot:spring-boot-starter-webflux")
 
+	implementation ("org.jsoup:jsoup:1.17.2")
 
-	//for jwt
-	implementation ("io.jsonwebtoken:jjwt-api:0.11.5")
-	runtimeOnly ("io.jsonwebtoken:jjwt-impl:0.11.5")
-	runtimeOnly ("io.jsonwebtoken:jjwt-jackson:0.11.5") // JSON 직렬화/역직렬화 지원
 }
 
 dependencyManagement {
