@@ -15,3 +15,45 @@ out/
 *.class
 *.log
 *.bin
+
+# IDE & build
+.idea/
+.vscode/
+.gradle/
+**/build/
+out/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Logs & temp
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# Gradle/Maven
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+target/
+
+# Spring Boot application config
+application.properties
+application-*.yml
+application-*.yaml
+application-*.properties
+
+# Classes
+*.class
+
+# 기타
+*.bin
+*.db
+*.sqlite
+hs_err_pid*
+
