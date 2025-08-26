@@ -1,8 +1,8 @@
 package ict.project.resume.service;
 
 import ict.project.resume.entity.ResumeEntity;
-import ict.project.user.UserEntity;
 import ict.project.resume.repository.ResumeRepository;
+import ict.project.user.UserEntity;
 import ict.project.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -140,3 +140,44 @@ public class ResumeService {
         }
     }
 }
+//package ict.project.resume.service;
+//
+//import ict.project.resume.entity.ResumeEntity;
+//import ict.project.resume.entity.UserEntity;
+//import ict.project.resume.repository.ResumeRepository;
+//import ict.project.resume.repository.UserRepository;
+//import lombok.RequiredArgsConstructor;
+//import lombok.extern.slf4j.Slf4j;
+//import org.jsoup.Jsoup;
+//import org.jsoup.nodes.Document;
+//import org.jsoup.safety.Safelist;
+//import org.springframework.beans.factory.annotation.Value;
+//import org.springframework.stereotype.Service;
+//import org.springframework.transaction.annotation.Transactional;
+//import org.springframework.web.multipart.MultipartFile;
+//
+//import java.io.IOException;
+//import java.nio.charset.StandardCharsets;
+//import java.nio.file.*;
+//import java.time.LocalDateTime;
+//import java.util.UUID;
+//
+//@Service
+//@RequiredArgsConstructor
+//public class ResumeService {
+//    private final ResumeRepository resumeRepository;
+//
+//    public ResumeEntity saveResume(Integer userId, MultipartFile file) throws IOException {
+//        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+//        Path savePath = Path.of("uploads").resolve(fileName);
+//        Files.createDirectories(savePath.getParent());
+//        file.transferTo(savePath.toFile());
+//
+//        ResumeEntity entity = new ResumeEntity();
+//        entity.setFileName(fileName);
+//        entity.setFilePath(savePath.toString());
+//        entity.setUpdatedAt(LocalDateTime.now());
+//
+//        return resumeRepository.save(entity);
+//    }
+//}

@@ -2,9 +2,9 @@ package ict.project.resume.service;
 
 import ict.project.resume.entity.RagChunkEntity;
 import ict.project.resume.entity.RagSettingsEntity;
-import ict.project.user.UserEntity;
 import ict.project.resume.repository.RagChunkRepository;
 import ict.project.resume.repository.RagSettingsRepository;
+import ict.project.user.UserEntity;
 import ict.project.user.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
