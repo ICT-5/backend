@@ -87,6 +87,30 @@ public class ChromaService {
                 .block();
     }
 
+    public void upsertBatch(String collectionId,
+                            List<String> ids,
+                            List<String> documents,
+                            List<List<Float>> embeddings,
+                            List<Map<String, Object>> metadatas) {
+
+        Map<String, Object> payload = Map.of(
+                "ids", ids,
+                "documents", documents,
+                "metadatas", metadatas,
+                "embeddings", embeddings
+        );
+
+        chroma.post()
+                .uri("/tenants/{t}/databases/{d}/collections/{cid}/add", tenant, database, collectionId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(payload)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+                .block();
+    }
+
+
     /* =======================
      * Read (get by page)
      * ======================= */

@@ -120,19 +120,52 @@ public class BulkExcelIngestService {
                 List<String> chunks = chunker.chunk(essayText, maxLen);
 
                 int idx = 0;
+
+//                for (String ch : chunks) {
+//                    List<Float> vec = embeddingService.embedAsList(ch);
+//                    String id = (essayId == null || essayId.isBlank() ? ("row-" + r) : essayId) + ":" + (idx++);
+//
+//                    Map<String, Object> meta = new HashMap<>();
+//                    meta.put("essay_id", essayId);
+//                    meta.put("source", sourceTag);
+//                    meta.put("chunk_len", ch.length());
+//                    meta.put("row_index", r);
+//
+//                    chromaService.upsert(collection, id, ch, vec, meta);
+//                    totalChunks++;
+//                }
+                List<String> ids = new ArrayList<>();
+                List<String> docs = new ArrayList<>();
+                List<List<Float>> vecs = new ArrayList<>();
+                List<Map<String, Object>> metas = new ArrayList<>();
+
                 for (String ch : chunks) {
-                    List<Float> vec = embeddingService.embedAsList(ch);
-                    String id = (essayId == null || essayId.isBlank() ? ("row-" + r) : essayId) + ":" + (idx++);
+                    ids.add((essayId == null || essayId.isBlank() ? ("row-" + r) : essayId) + ":" + (idx++));
+                    docs.add(ch);
+                    vecs.add(embeddingService.embedAsList(ch));
+                    metas.add(Map.of(
+                            "essay_id", essayId,
+                            "source", sourceTag,
+                            "chunk_len", ch.length(),
+                            "row_index", r
+                    ));
 
-                    Map<String, Object> meta = new HashMap<>();
-                    meta.put("essay_id", essayId);
-                    meta.put("source", sourceTag);
-                    meta.put("chunk_len", ch.length());
-                    meta.put("row_index", r);
-
-                    chromaService.upsert(collection, id, ch, vec, meta);
-                    totalChunks++;
+                    if (ids.size() >= 50) { // batch size
+                        chromaService.upsertBatch(collection, ids, docs, vecs, metas);
+                        ids.clear();
+                        docs.clear();
+                        vecs.clear();
+                        metas.clear();
+                    }
                 }
+                // 남은 것 flush
+                if (!ids.isEmpty()) {
+                    chromaService.upsertBatch(collection, ids, docs, vecs, metas);
+                }
+
+                totalChunks += chunks.size();
+
+
             }
         }
         log.info("Excel ingestion done. totalChunks={}, sourceTag={}, maxLen={}", totalChunks, sourceTag, maxLen);
