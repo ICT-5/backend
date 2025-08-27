@@ -1,11 +1,9 @@
 package ict.project.resume.controller;
 
-import ict.project.resume.service.ChromaVectorStoreService;
-import ict.project.resume.service.EmbeddingService;
-import ict.project.resume.service.FileTextExtractor;
-import ict.project.resume.service.JobPostingFetcher;
-import ict.project.resume.service.LlmClientService;   // ⬅️ LLM 클라이언트 주입
+import ict.project.resume.entity.ResumeEntity;
+import ict.project.resume.service.*;
 import jakarta.validation.constraints.Min;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -22,27 +20,29 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/flow")
 @Validated
+@RequiredArgsConstructor
 public class FlowController {
 
     private final FileTextExtractor fileTextExtractor;
     private final JobPostingFetcher jobPostingFetcher;
     private final EmbeddingService embeddingService;
     private final ChromaVectorStoreService chromaVectorStoreService;
-    private final LlmClientService llmClient; // ⬅️ 추가
+    private final LlmClientService llmClient;
+    private final ResumeService resumeService;
 
-    public FlowController(
-            FileTextExtractor fileTextExtractor,
-            JobPostingFetcher jobPostingFetcher,
-            EmbeddingService embeddingService,
-            ChromaVectorStoreService chromaVectorStoreService,
-            LlmClientService llmClient // ⬅️ 추가
-    ) {
-        this.fileTextExtractor = fileTextExtractor;
-        this.jobPostingFetcher = jobPostingFetcher;
-        this.embeddingService = embeddingService;
-        this.chromaVectorStoreService = chromaVectorStoreService;
-        this.llmClient = llmClient; // ⬅️ 추가
-    }
+//    public FlowController(
+//            FileTextExtractor fileTextExtractor,
+//            JobPostingFetcher jobPostingFetcher,
+//            EmbeddingService embeddingService,
+//            ChromaVectorStoreService chromaVectorStoreService,
+//            LlmClientService llmClient // ⬅️ 추가
+//    ) {
+//        this.fileTextExtractor = fileTextExtractor;
+//        this.jobPostingFetcher = jobPostingFetcher;
+//        this.embeddingService = embeddingService;
+//        this.chromaVectorStoreService = chromaVectorStoreService;
+//        this.llmClient = llmClient; // ⬅️ 추가
+//    }
 
     /**
      * multipart/form-data 업로드로 분석 실행
@@ -53,7 +53,7 @@ public class FlowController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<?> analyzeMultipart(
-            @RequestParam Long userId,
+            @RequestParam Integer userId,
             @RequestParam("resumeFile") MultipartFile resumeFile,
             @RequestParam String jobUrl,
             @RequestParam(defaultValue = "accepted-essays") String collection,
@@ -65,6 +65,7 @@ public class FlowController {
 
         // 2) 채용공고 텍스트
         String postingText = jobPostingFetcher.fetch(jobUrl);
+        ResumeEntity savedResume = resumeService.saveResume(userId, resumeFile, jobUrl);
 
         // 3) 벡터 검색
         String resumeForEmbedding = limitForEmbedding(resumeText);

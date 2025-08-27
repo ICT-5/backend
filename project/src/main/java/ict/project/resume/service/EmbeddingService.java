@@ -27,6 +27,7 @@ public class EmbeddingService {
         try {
             List<String> inputs = List.of(safe);     // <-- List<String>
             List<float[]> result = openAiEmbeddingClient.embed(model, inputs); // <-- 시그니처 일치
+            log.info("Embedding result: {}", result);
             return (result != null && !result.isEmpty()) ? result.get(0) : new float[0];
         } catch (Exception e) {
             log.error("OpenAI embeddings error", e);

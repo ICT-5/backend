@@ -1,153 +1,183 @@
+<!-- src/main/resources/static/index.html -->
 <!doctype html>
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ICT 채용 시뮬레이터 - 통합 업로드 데모</title>
+  <title>RAG 분석</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
-    :root{--bg:#0f172a;--card:#111827;--ink:#e5e7eb;--muted:#9ca3af;--accent:#38bdf8;--danger:#f87171}
-    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",sans-serif}
-    header{padding:24px 16px;border-bottom:1px solid #1f2937;background:#0b1220;position:sticky;top:0}
-    header h1{margin:0;font-size:18px} header small{color:var(--muted)}
-    main{max-width:980px;margin:24px auto;padding:0 16px;display:grid;gap:16px}
-    .card{background:var(--card);border:1px solid #1f2937;border-radius:14px;padding:16px}
-    .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-    label{font-weight:600}
-    input[type="text"],input[type="number"],input[type="url"],input[type="file"],textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #1f2937;background:#0b1220;color:var(--ink)}
-    textarea{min-height:120px}
-    .btn{appearance:none;border:1px solid #1f2937;background:#0c4a6e;color:#e6f6ff;padding:10px 14px;border-radius:10px;cursor:pointer}
-    .btn:hover{background:#075985}
-    .btn.secondary{background:#1f2937}
-    .btn.danger{background:#7f1d1d}
-    .hint{color:var(--muted);font-size:12px}
-    pre{background:#0b1220;border:1px solid #1f2937;border-radius:10px;padding:12px;overflow:auto}
-    .grid{display:grid;gap:12px}
-    .cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
-    @media (max-width:800px){.cols-2{grid-template-columns:1fr}}
-    .badge{display:inline-block;padding:2px 8px;border-radius:999px;background:#1f2937;color:#cbd5e1;font-size:12px}
+    :root { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+    body { margin: 24px; background: #f8fafc; color: #0f172a; }
+    h1 { margin: 0 0 16px; }
+    .grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
+    @media (min-width: 980px) { .grid { grid-template-columns: 420px 1fr; } }
+
+    .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+    .row { display: grid; grid-template-columns: 140px 1fr; gap: 12px; align-items: center; margin-bottom: 10px; }
+    label { font-weight: 600; color: #334155; }
+    input[type="text"], input[type="number"], input[type="url"], input[type="file"] {
+      width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff;
+    }
+    button { padding: 10px 14px; border: 0; border-radius: 10px; background: #2563eb; color: #fff; font-weight: 700; cursor: pointer; }
+    button:disabled { opacity: .6; cursor: not-allowed; }
+    .hint { font-size: 12px; color: #64748b; }
+    .cols { display: grid; gap: 16px; grid-template-columns: 1fr; }
+    @media (min-width: 1200px) { .cols { grid-template-columns: 1fr 1fr; } }
+
+    .kvs { margin: 0 0 8px; padding: 0; list-style: none; font-size: 14px; color:#475569;}
+    .kvs li{ margin:2px 0}
+    .mono { white-space: pre-wrap; word-break: break-word; background: #0b1020; color: #e2e8f0; padding: 14px; border-radius: 10px; overflow: auto; max-height: 50vh; }
+    .retrieved li{ margin:6px 0; }
+    .dim { color:#64748b; font-size:12px }
   </style>
 </head>
 <body>
-<header>
-  <h1>ICT 채용 면접 시뮬레이터 · <small class="badge">통합 업로드 데모</small></h1>
-  <small>백엔드 API와 통신하는 간단 테스트 페이지입니다.</small>
-</header>
+<h1>RAG 분석 실행</h1>
 
-<main>
-  <!-- 공통 설정 -->
-  <section class="card grid">
-    <div class="row">
-      <div style="flex:1 1 180px">
-        <label for="userId">유저 ID</label>
-        <input id="userId" type="number" value="1" />
-        <div class="hint">DB의 <code>User.id</code></div>
-      </div>
-      <div style="flex:2 1 280px">
-        <label for="baseUrl">API 베이스 URL</label>
-        <input id="baseUrl" type="url" placeholder="예: http://localhost:8080" />
-        <div class="hint">비워두면 동일 오리진 사용</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 1) 통합 업로드: 자소서 + 채용공고 -->
-  <section class="card grid">
-    <h3>① 자소서 업로드 + 채용공고 크롤링 (통합)</h3>
-    <div class="row" style="width:100%">
-      <div style="flex:1 1 260px">
-        <label for="resumeFile">자소서 파일</label>
-        <input id="resumeFile" type="file" />
-      </div>
-      <div style="flex:2 1 320px">
-        <label for="jobUrl">채용공고 URL</label>
-        <input id="jobUrl" type="url" placeholder="https://example.com/job/123" />
-      </div>
-      <div>
-        <button class="btn" id="btnUnified">통합 업로드 실행</button>
-      </div>
-    </div>
-    <div class="hint">
-      엔드포인트: <code>POST /api/resume/upload</code> (multipart/form-data)<br/>
-      필드: <code>userId</code> (query), <code>resumeFile</code> (file), <code>jobUrl</code> (text)
-    </div>
-    <pre id="outUnified">결과가 여기 표시됩니다…</pre>
-  </section>
-
-  <!-- 2) 분석 -->
-  <section class="card grid cols-2">
-    <div>
-      <h3>② 분석 실행</h3>
+<div class="grid">
+  <!-- 왼쪽: 폼 -->
+  <div class="card">
+    <form id="analyzeForm">
       <div class="row">
-        <button class="btn" id="btnAnalyze">분석 시작</button>
+        <label for="userId">userId</label>
+        <input id="userId" name="userId" type="number" value="1" required />
       </div>
-      <div class="hint">엔드포인트: <code>POST /api/analysis/v2/feedback</code> (JSON: { userId })</div>
+      <div class="row">
+        <label for="resumeFile">자소서 파일</label>
+        <input id="resumeFile" name="resumeFile" type="file" required />
+      </div>
+      <div class="row">
+        <label for="jobUrl">채용공고 URL</label>
+        <input id="jobUrl" name="jobUrl" type="url" placeholder="https://..." required />
+      </div>
+      <div class="row">
+        <label for="collection">컬렉션</label>
+        <input id="collection" name="collection" type="text" value="accepted-essays" />
+      </div>
+      <div class="row">
+        <label for="topK">topK</label>
+        <input id="topK" name="topK" type="number" min="1" max="20" value="5" />
+      </div>
+      <div class="row" style="grid-template-columns: 1fr;">
+        <button type="submit" id="analyzeBtn">분석 실행</button>
+      </div>
+      <p class="hint">서버와 동일 오리진에서 열면 CORS 설정 없이 동작합니다.</p>
+    </form>
+  </div>
+
+  <!-- 오른쪽: 결과들 -->
+  <div class="cols">
+    <!-- 요약/메타 + RAG 검색 결과 -->
+    <div class="card">
+      <h3 style="margin:0 0 10px">요약 & 검색 결과</h3>
+      <ul class="kvs" id="meta"></ul>
+      <h4 style="margin:10px 0 6px">검색된 문서 (retrieved)</h4>
+      <ol id="retrieved" class="retrieved"></ol>
+      <p class="dim" id="retrievedEmpty" style="display:none">검색 결과가 비었습니다.</p>
     </div>
-    <div>
-      <label>LLM 결과</label>
-      <pre id="outAnalyze">결과가 여기 표시됩니다…</pre>
+
+    <!-- 분석 내용 (LLM) -->
+    <div class="card">
+      <h3 style="margin:0 0 10px">분석 내용</h3>
+      <div id="analysis" class="mono" style="min-height:200px;">(아직 없음)</div>
     </div>
-    <div style="grid-column:1/-1">
-      <label>최종 프롬프트 (RAG)</label>
-      <pre id="outPrompt">프롬프트가 여기 표시됩니다…</pre>
+
+    <!-- 원본 응답(JSON) -->
+    <div class="card" style="grid-column: 1 / -1;">
+      <h3 style="margin:0 0 10px">원본 응답(JSON)</h3>
+      <pre id="analyzeOut" class="mono" style="margin:0;">(요청 전)</pre>
     </div>
-  </section>
-</main>
+  </div>
+</div>
 
 <script>
-  const $ = (sel) => document.querySelector(sel);
-  const getBase = () => ($("#baseUrl").value || "").replace(/\/$/, "");
-  const getUserId = () => parseInt($("#userId").value || "0", 10);
+  const qs = id => document.getElementById(id);
 
-  function show(el, data){
-    try{ el.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2); }
-    catch{ el.textContent = String(data); }
+  function setMeta(data) {
+    const meta = qs('meta');
+    meta.innerHTML = '';
+    const rows = [
+      ['ok', String(data.ok)],
+      ['userId', data.userId],
+      ['collection', data.collection],
+      ['topK', data.topK],
+      ['resumePreview', data.resumePreview],
+      ['postingPreview', data.postingPreview],
+    ];
+    rows.forEach(([k,v]) => {
+      if (v === undefined || v === null || v === '') return;
+      const li = document.createElement('li');
+      li.innerHTML = `<strong>${k}</strong>: ${typeof v === 'string' ? v : JSON.stringify(v)}`;
+      meta.appendChild(li);
+    });
   }
 
-  // 1) 통합 업로드
-  $("#btnUnified").addEventListener("click", async () => {
-    const userId = getUserId();
-    const file = $("#resumeFile").files[0];
-    const jobUrl = $("#jobUrl").value.trim();
+  function setRetrieved(list) {
+    const ol = qs('retrieved');
+    const empty = qs('retrievedEmpty');
+    ol.innerHTML = '';
+    if (!Array.isArray(list) || list.length === 0) {
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+    list.forEach((r, i) => {
+      const li = document.createElement('li');
+      const dist = (typeof r.distance === 'number') ? r.distance.toFixed(4) : r.distance;
+      li.innerHTML = `
+        <div><strong>#${i+1}</strong> <span class="dim">id:</span> ${r.id ?? ''} <span class="dim">distance:</span> ${dist ?? ''}</div>
+        <div>${(r.textPreview ?? '').replace(/\n/g,' ')}</div>
+      `;
+      ol.appendChild(li);
+    });
+  }
 
-    if(!userId) return alert("유저 ID를 입력하세요");
-    if(!file) return alert("자소서 파일을 선택하세요");
-    if(!jobUrl) return alert("채용공고 URL을 입력하세요");
+  function setAnalysis(text) {
+    qs('analysis').textContent = text ? String(text) : '(분석 없음)';
+  }
 
-    const fd = new FormData();
-    fd.append("resumeFile", file);
-    fd.append("jobUrl", jobUrl);
+  function setRaw(raw) {
+    const out = qs('analyzeOut');
+    try { out.textContent = JSON.stringify(raw, null, 2); }
+    catch { out.textContent = String(raw); }
+  }
 
-    const url = `${getBase()}/api/resume/upload?userId=${encodeURIComponent(userId)}`;
-    try{
-      const res = await fetch(url, { method: 'POST', body: fd });
-      const txt = await res.text();
-      let data; try{ data = JSON.parse(txt) } catch{ data = txt }
-      show($("#outUnified"), data);
-    }catch(e){ show($("#outUnified"), String(e)); }
-  });
+  qs('analyzeForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = qs('analyzeBtn');
+    btn.disabled = true;
+    setAnalysis('요청 중...');
+    setRaw('요청 중...');
 
-  // 2) 분석 실행 (V2)
-  $("#btnAnalyze").addEventListener("click", async () => {
-    const userId = getUserId();
-    if(!userId) return alert("유저 ID를 입력하세요");
+    try {
+      const fd = new FormData();
+      fd.append('userId', qs('userId').value);
+      fd.append('resumeFile', qs('resumeFile').files[0]);
+      fd.append('jobUrl', qs('jobUrl').value);
+      fd.append('collection', qs('collection').value);
+      fd.append('topK', qs('topK').value);
 
-    const url = `${getBase()}/api/analysis/v2/feedback`;
-    try{
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId })
-      });
-      const txt = await res.text();
-      let data; try{ data = JSON.parse(txt) } catch{ data = txt }
+      const res = await fetch('/api/flow/analyze', { method: 'POST', body: fd });
+      const text = await res.text();
+      let data = text;
+      try { data = JSON.parse(text); } catch {}
 
-      if(data && typeof data === 'object'){
-        show($("#outAnalyze"), data.result ?? data);
-        show($("#outPrompt"), data.prompt ?? "(프롬프트 미포함 응답)");
+      // 화면에 반영
+      if (typeof data === 'object' && data) {
+        setMeta(data);
+        setRetrieved(data.retrieved);
+        setAnalysis(data.analysis);
+        setRaw(data);
       } else {
-        show($("#outAnalyze"), data);
+        setAnalysis('(서버가 JSON 대신 텍스트를 반환)');
+        setRaw(text);
       }
-    }catch(e){ show($("#outAnalyze"), String(e)); }
+    } catch (err) {
+      setAnalysis('(에러 발생)');
+      setRaw('에러: ' + err);
+    } finally {
+      btn.disabled = false;
+    }
   });
 </script>
 </body>
