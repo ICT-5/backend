@@ -2,6 +2,8 @@ package ict.project.resumeAnalyze;
 
 import ict.project.resumeAnalyze.dto.InputRequestDto;
 import ict.project.resumeAnalyze.dto.ResumeQuestionDto;
+import ict.project.user.UserEntity;
+import ict.project.user.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -11,15 +13,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
 public class ResumeAnalyzeService {
 
+    private final UserRepository userRepository;
+    private final ResumeQuestionRepository resumeQuestionRepository;
     @Value("${spring.ai.openai.api-key}")
     private String apiKey;
 
@@ -29,7 +30,12 @@ public class ResumeAnalyzeService {
     @Value("${spring.ai.openai.model}")
     private String model;
 
-    public List<ResumeQuestionDto> generateQuestions(InputRequestDto request) {
+    public ResumeAnalyzeService(UserRepository userRepository, ResumeQuestionRepository resumeQuestionRepository) {
+        this.userRepository = userRepository;
+        this.resumeQuestionRepository = resumeQuestionRepository;
+    }
+
+    public List<ResumeQuestionDto> generateQuestions(Integer userId, InputRequestDto request) {
         log.info("🔑 OpenAI Key: {}", apiKey);
         RestTemplate restTemplate = new RestTemplate();
 
@@ -52,6 +58,8 @@ public class ResumeAnalyzeService {
 
         HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(requestBody, headers);
 
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("none user"));
+
         try {
             ResponseEntity<Map> response = restTemplate.postForEntity(apiUrl, httpEntity, Map.class);
 
@@ -65,6 +73,10 @@ public class ResumeAnalyzeService {
                 String cleaned = line.replaceAll("^[0-9]+[.)]?\\s*", "").trim();
                 if (!cleaned.isEmpty()) {
                     questions.add(new ResumeQuestionDto(cleaned));
+                    ResumeQuestion resumeQuestion = ResumeQuestion.builder()
+                            .question(cleaned)
+                            .user(user).build();
+                    resumeQuestionRepository.save(resumeQuestion);
                 }
             }
 
@@ -86,7 +98,8 @@ public class ResumeAnalyzeService {
             %s
 
             위 내용을 기반으로 면접 예상 질문 20개를 한국어로 출력해 주세요.
-            각 질문은 한 줄로 출력하고, 번호를 붙여 주세요.
+            각 질문은 꼭 키워드,즉 명사 형식으로 뽑아주세요
+            예를 들어, 지원 동기를 물어보고자 한다면 "지원동기가 무엇인가요?" 대신 "지원동기" 이런 형식으로 출력해주세요
             이력서와 채용공고는 각 항목을 매칭해서 꼼꼼히 비교하고,
             두 내용을 바탕으로 지원자의 직무, 경력, 스펙 등을 추출하여 그 기반으로 질문을 뽑아주세요.
             """.formatted(resume, jobPost);
