@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
@@ -24,9 +26,16 @@ public class UserController {
         return ResponseEntity.ok(userService.signup(request));
     }
 
+//    @PostMapping("/login")
+//    public ResponseEntity<String> login(@RequestBody LoginRequestDto request) {
+//        return ResponseEntity.ok(userService.login(request));
+//    }
+
+
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequestDto request) {
-        return ResponseEntity.ok(userService.login(request));
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequestDto request) {
+        String token = userService.login(request);
+        return ResponseEntity.ok(Map.of("accessToken", token)); // JSON으로 응답
     }
 
     @PostMapping("/profile")
