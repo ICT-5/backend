@@ -41,7 +41,7 @@ public class ResumeService {
      * 3. 이력서 서버 경로 및 유저아이디 DB에 저장
      */
     @Transactional
-    public ResumeEntity saveResume(Integer userId, MultipartFile resumeFile) throws IOException {
+    public ResumeEntity saveResume(Integer userId, MultipartFile resumeFile, String jobUrl) throws IOException {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다. id=" + userId));
 
@@ -63,6 +63,7 @@ public class ResumeService {
         resume.setFileName(safeName);
         resume.setFilePath(relativizeForDb(target));
         resume.setUpdatedAt(LocalDateTime.now());
+        resume.setJobfilePath(jobUrl);
 
         return resumeRepository.save(resume);
     }

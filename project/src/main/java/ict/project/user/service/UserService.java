@@ -33,7 +33,7 @@ public class UserService {
         return "회원가입 성공";
     }
 
-    // 로그인 -> JWT 발급
+    // 로그인 -> JWT 발급 (✅ userId 클레임 포함)
     public String login(LoginRequestDto request) {
         UserEntity user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 이메일입니다."));
@@ -42,7 +42,8 @@ public class UserService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        return jwtUtil.generateToken(user.getEmail());  // email을 payload에 담은 JWT 발급
+        // ✅ 변경: 이메일이 아니라 UserEntity로 생성 → userId 클레임 포함된 토큰
+        return jwtUtil.generateToken(user);
     }
 
     public ProfileResponseDto updateProfile(Integer userId, ProfileRequestDto request) {

@@ -31,7 +31,7 @@ public class ResumeController {
             @RequestParam("jobUrl") String jobUrl
     ) {
         try {
-            ResumeEntity savedResume = resumeService.saveResume(userId, resumeFile);
+            ResumeEntity savedResume = resumeService.saveResume(userId, resumeFile, jobUrl);
             ragService.ensureResumeFeedbackPrompt();
 
             String resumeContent = textExtractionService.extract(Path.of(savedResume.getFilePath()));
