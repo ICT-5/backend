@@ -5,6 +5,9 @@ import ict.project.resume.service.EmbeddingService;
 import ict.project.resume.service.FileTextExtractor;
 import ict.project.resume.service.JobPostingFetcher;
 import ict.project.resume.service.LlmClientService;   // ⬅️ LLM 클라이언트 주입
+import ict.project.resumeAnalyze.ResumeAnalyzeService;
+import ict.project.resumeAnalyze.dto.InputRequestDto;
+import ict.project.user.service.JwtUtil;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,19 +32,25 @@ public class FlowController {
     private final EmbeddingService embeddingService;
     private final ChromaVectorStoreService chromaVectorStoreService;
     private final LlmClientService llmClient; // ⬅️ 추가
+    private final JwtUtil jwtUtil;
+    private final ResumeAnalyzeService resumeAnalyzeService;
 
     public FlowController(
             FileTextExtractor fileTextExtractor,
             JobPostingFetcher jobPostingFetcher,
             EmbeddingService embeddingService,
             ChromaVectorStoreService chromaVectorStoreService,
-            LlmClientService llmClient // ⬅️ 추가
+            LlmClientService llmClient, // ⬅️ 추가
+            JwtUtil jwtUtil,
+            ResumeAnalyzeService resumeAnalyzeService
     ) {
         this.fileTextExtractor = fileTextExtractor;
         this.jobPostingFetcher = jobPostingFetcher;
         this.embeddingService = embeddingService;
         this.chromaVectorStoreService = chromaVectorStoreService;
         this.llmClient = llmClient; // ⬅️ 추가
+        this.jwtUtil = jwtUtil;
+        this.resumeAnalyzeService = resumeAnalyzeService;
     }
 
     /**
@@ -53,12 +62,15 @@ public class FlowController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<?> analyzeMultipart(
-            @RequestParam Long userId,
+            @RequestHeader("Authorization") String authHeader,
             @RequestParam("resumeFile") MultipartFile resumeFile,
             @RequestParam String jobUrl,
             @RequestParam(defaultValue = "accepted-essays") String collection,
             @RequestParam(defaultValue = "5") @Min(1) Integer topK
     ) throws IOException {
+
+        String token = authHeader.replace("Bearer ", "");
+        Integer userId = jwtUtil.getUserId(token);
 
         // 1) 파일 텍스트 추출
         String resumeText = fileTextExtractor.extract(resumeFile);
@@ -102,6 +114,12 @@ public class FlowController {
                 "distance", h.distance(),
                 "textPreview", preview(nvl(h.text()), 240)
         )).toList());
+
+        //질문 키워드로 20개 생성
+        InputRequestDto inputRequestDto = new InputRequestDto();
+        inputRequestDto.setResumeText(resumeText);
+        inputRequestDto.setJobPostText(postingText);
+        resumeAnalyzeService.generateQuestions(userId,inputRequestDto);
 
         return ResponseEntity.ok(resp);
     }
