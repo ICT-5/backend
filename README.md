@@ -43,18 +43,27 @@ GPT를 활용해 자연스럽고 실질적인 피드백 제공.
 
 # 🛠 Tech Stack
 
-| 분야 | 기술 |
-|------|------|
-| Framework | Spring Boot |
-| Language | Java |
-| Database | MySQL |
-| Vector DB | Chroma DB |
-| Authentication | JWT |
-| Crawling | Jsoup |
-| File Parsing | Apache Tika |
-| LLM | OpenAI GPT |
-| Build Tool | Gradle |
+##  프론트엔드
+- HTML5  
+- CSS3  
+- TypeScript  
+- React  
+- Redux  
+- Figma  
 
+##  백엔드
+- Java  
+- Spring Boot  
+- Spring Boot JWT   
+- Apache Tika (PDF 텍스트 추출)  
+- Jsoup (웹 크롤링)  
+- OpenAI GPT-4o-mini  
+- LangChain / FastAPI (면접 시뮬레이션 LLM 서버)
+  
+##  DB
+- MySQL  
+- Spring Boot 
+- Chroma DB (벡터 저장소)  
 ---
 
 # 🏗 시스템 아키텍처
